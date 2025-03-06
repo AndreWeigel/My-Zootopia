@@ -7,10 +7,11 @@ def load_data(file_path):
     return json.load(handle)
 
 
-def print_animal_data():
-    """ Prints animal data from JSON file """
+def get_animal_data():
+    """ Returns the animal data from JSON file """
     animals_data = load_data('animals_data.json')
-    print(animals_data[0].keys())
+    output = []
+
     for animal in animals_data:
         name = animal.get('name')
         diet = animal.get('characteristics', {}).get('diet')
@@ -21,16 +22,54 @@ def print_animal_data():
         if None in (name, diet, location, animal_type):
             continue
 
-        print(f"""
-    Name: {name}
-    Diet: {diet}
-    Location: {location}
-    Type: {animal_type}
-        """)
+        output.append(f"""
+            Name: {name}
+            Diet: {diet}
+            Location: {location}
+            Type: {animal_type}
+                """)
+
+    return '\n'.join(output)
+
+
+def replace_keyword_in_html(input_file, keyword, replacement, output_file):
+    """
+    Reads an HTML file, replaces a keyword with a specified string,
+    and optionally saves the modified content to a new file.
+    """
+    try:
+        # Read the HTML file
+        with open(input_file, "r", encoding="utf-8") as file:
+            html_content = file.read()
+
+        # Replace the keyword with the given string
+        modified_html = html_content.replace(keyword, replacement)
+
+        # Save to output file if specified
+        if output_file:
+            with open(output_file, "w", encoding="utf-8") as file:
+                file.write(modified_html)
+
+        return modified_html
+    except FileNotFoundError:
+        print(f"Error: File '{input_file}' not found.")
+        return None
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
 
 
 def main():
-    print_animal_data()
+    # Get data
+    animal_data = get_animal_data()
+
+    # define paths and keyword
+    keyword = '__REPLACE_ANIMALS_INFO__'
+    input_file = 'animals_template.html'
+    output_file = 'animals.html'
+
+    # Get new html file
+    replace_keyword_in_html(input_file, keyword, animal_data, output_file)
 
 
 if __name__ == '__main__':
