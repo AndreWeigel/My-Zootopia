@@ -10,7 +10,7 @@ def load_data(file_path):
 def get_animal_data():
     """ Returns the animal data from JSON file """
     animals_data = load_data('animals_data.json')
-    output = []
+    output = ['<ul class="cards">']
 
     for animal in animals_data:
         name = animal.get('name')
@@ -23,11 +23,15 @@ def get_animal_data():
             continue
 
         output.append(f"""
-            Name: {name}
-            Diet: {diet}
-            Location: {location}
-            Type: {animal_type}
-                """)
+        <li class="cards__item">
+        Name: {name}<br/>
+        Diet: {diet}<br/>
+        Location: {location}<br/>
+        Type: {animal_type}<br/>
+        </li>
+            """)
+
+    output.append('</ul>')
 
     return '\n'.join(output)
 
