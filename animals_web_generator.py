@@ -1,6 +1,5 @@
 import json
 
-
 def load_data(file_path):
   """ Loads a JSON file """
   with open(file_path, "r") as handle:
@@ -9,14 +8,53 @@ def load_data(file_path):
 
 def get_animal_data():
     """ Returns the animal data from JSON file """
-    animals_data = load_data('animals_data.json')
+    return load_data('animals_data.json')
+
+
+def get_filter(animals_data):
+    """ Filter animal data by skin type."""
+    skin_types = set([animal.get('characteristics', {}).get('skin_type') for animal in animals_data])
+    # for handling missing data
+    skin_types.add("Other")
+
+    # Display available skin types to the user
+    print("Available skin types:", ', '.join(skin_types))
+
+    while True:
+        # Ask user to select a skin type
+        selected_skin_type = input("Enter a skin type from the list above: ")
+
+        if selected_skin_type not in skin_types:
+            print(f"Invalid choice. Please select a valid skin type from the list.")
+            continue
+        else:
+            return selected_skin_type
+
+
+def format_data(animals_data):
+    """ Returns the animal data from JSON file """
+
+    # get filtered skin type from user
+    selected_skin_type = get_filter(animals_data)
+
     output = ['<ul class="cards">']
+
 
     for animal in animals_data:
         name = animal.get('name')
         diet = animal.get('characteristics', {}).get('diet')
         location = ' '.join(animal.get('locations', [])) if 'locations' in animal else None
         animal_type = animal.get('characteristics', {}).get('type')
+        skin_type = animal.get('characteristics', {}).get('skin_type')
+
+        # Skip animals that don't match the selected skin_type
+        if selected_skin_type == "Other":
+            if skin_type is not None:
+                continue
+        else:
+            # Skip animals that don't match the selected skin_type
+            if skin_type != selected_skin_type:
+                continue
 
         # Skip printing if any of the values are missing
         if None in (name, diet, location, animal_type):
@@ -24,14 +62,15 @@ def get_animal_data():
 
         output.append(f"""
         <li class="cards__item">
-            <div class="card__title">{name}</div>
-            <div class="card__text">
-                <ul>
-                <li><strong>Diet:</strong> {diet}</li>
-                <li><strong>Location:</strong> {location}</li>
-                <li><strong>Type:</strong> {animal_type}</li>
-                </ul>
-            </div>
+          <div class="card__title">{name}</div>
+          <div class="card__text">
+            <ul>
+              <li><strong>Diet:</strong> {diet}</li>
+              <li><strong>Location:</strong> {location}</li>
+              <li><strong>Type:</strong> {animal_type}</li>
+              <li><strong>Skin Type:</strong> {skin_type if skin_type else 'Unknown'}</li>
+            </ul>
+          </div>
         </li>
             """)
 
@@ -70,6 +109,8 @@ def replace_keyword_in_html(input_file, keyword, replacement, output_file):
 def main():
     # Get data
     animal_data = get_animal_data()
+
+    animal_data = format_data(animal_data)
 
     # define paths and keyword
     keyword = '__REPLACE_ANIMALS_INFO__'
