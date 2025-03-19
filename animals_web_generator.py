@@ -1,14 +1,25 @@
 import json
 
+
+ANIMAL_FILE_PATH = "animals_data.json"
+
+
 def load_data(file_path):
-  """ Loads a JSON file """
-  with open(file_path, "r") as handle:
-    return json.load(handle)
+    """ Loads a JSON file """
+    try:
+        with open(file_path, "r") as handle:
+            return json.load(handle)
+    except FileNotFoundError:
+        print(f"Error: File '{file_path}' not found.")
+        return
+    except json.JSONDecodeError:
+        print(f"Error: Failed to decode JSON content in '{file_path}'.")
+        return
 
 
 def get_animal_data():
     """ Returns the animal data from JSON file """
-    return load_data('animals_data.json')
+    return load_data(ANIMAL_FILE_PATH)
 
 
 def get_filter(animals_data):
