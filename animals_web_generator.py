@@ -62,10 +62,9 @@ def format_data(animals_data):
         if selected_skin_type == "Other":
             if skin_type is not None:
                 continue
-        else:
-            # Skip animals that don't match the selected skin_type
-            if skin_type != selected_skin_type:
-                continue
+            print(animal)
+        elif skin_type != selected_skin_type:
+            continue
 
         # Skip printing if any of the values are missing
         if None in (name, diet, location, animal_type):
@@ -121,15 +120,14 @@ def main():
     # Get data
     animal_data = get_animal_data()
 
-    animal_data = format_data(animal_data)
-
+    formatted_animal_data = format_data(animal_data)
     # define paths and keyword
     keyword = '__REPLACE_ANIMALS_INFO__'
     input_file = 'animals_template.html'
     output_file = 'animals.html'
 
     # Get new html file
-    replace_keyword_in_html(input_file, keyword, animal_data, output_file)
+    replace_keyword_in_html(input_file, keyword, formatted_animal_data, output_file)
 
 
 if __name__ == '__main__':
