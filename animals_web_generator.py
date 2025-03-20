@@ -1,7 +1,9 @@
 import json
 
-
 ANIMAL_FILE_PATH = "animals_data.json"
+INPUT_HTML_FILE = "animals_template.html"
+OUTPUT_HTML_FILE = "animals.html"
+KEYWORD_PLACEHOLDER = "__REPLACE_ANIMALS_INFO__"
 
 
 def load_data(file_path):
@@ -117,13 +119,9 @@ def main():
     animal_data = get_animal_data()
 
     formatted_animal_data = filter_and_generate_html(animal_data)
-    # define paths and keyword
-    keyword = '__REPLACE_ANIMALS_INFO__'
-    input_file = 'animals_template.html'
-    output_file = 'animals.html'
 
     # Get new html file
-    replace_keyword_in_html(input_file, keyword, formatted_animal_data, output_file)
+    replace_keyword_in_html(INPUT_HTML_FILE, KEYWORD_PLACEHOLDER, formatted_animal_data, OUTPUT_HTML_FILE)
 
 
 if __name__ == '__main__':
