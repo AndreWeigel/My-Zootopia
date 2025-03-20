@@ -1,4 +1,6 @@
 import json
+import requests
+
 
 ANIMAL_FILE_PATH = "animals_data.json"
 INPUT_HTML_FILE = "animals_template.html"
@@ -44,12 +46,23 @@ def get_filter(animals_data):
             return selected_skin_type
 
 
-def filter_and_generate_html(animals_data):
-    """ Returns the animal data from JSON file """
+def filter_animal_data(animals_data, selected_skin_type):
+    """ Filters animal data based on the selected skin type. """
+    filtered_data = []
+    for animal in animals_data:
+        skin_type = animal.get('characteristics', {}).get('skin_type')
 
-    # get filtered skin type from user
-    selected_skin_type = get_filter(animals_data)
+        if selected_skin_type == "Other":
+            if skin_type is None:
+                filtered_data.append(animal)
+        elif skin_type == selected_skin_type:
+            filtered_data.append(animal)
 
+    return filtered_data
+
+
+def generate_html(animals_data):
+    """ Generates HTML from filtered animal data. """
     output = ['<ul class="cards">']
 
     for animal in animals_data:
@@ -57,15 +70,7 @@ def filter_and_generate_html(animals_data):
         diet = animal.get('characteristics', {}).get('diet', 'Unknown')
         location = ' '.join(animal.get('locations', [])) if 'locations' in animal else 'Unknown'
         animal_type = animal.get('characteristics', {}).get('type', 'Unknown')
-        skin_type = animal.get('characteristics', {}).get('skin_type')
-
-        # Skip animals that don't match the selected skin_type
-        if selected_skin_type == "Other":
-            if skin_type is not None:
-                continue
-            print(animal)
-        elif skin_type != selected_skin_type:
-            continue
+        skin_type = animal.get('characteristics', {}).get('skin_type', 'Unknown')
 
         output.append(f"""
         <li class="cards__item">
@@ -75,11 +80,11 @@ def filter_and_generate_html(animals_data):
               <li><strong>Diet:</strong> {diet}</li>
               <li><strong>Location:</strong> {location}</li>
               <li><strong>Type:</strong> {animal_type}</li>
-              <li><strong>Skin Type:</strong> {skin_type if skin_type else 'Unknown'}</li>
+              <li><strong>Skin Type:</strong> {skin_type}</li>
             </ul>
           </div>
         </li>
-            """)
+        """)
 
     output.append('</ul>')
 
@@ -118,7 +123,14 @@ def main():
     # Get data
     animal_data = get_animal_data()
 
-    formatted_animal_data = filter_and_generate_html(animal_data)
+    # Get user-selected filter
+    selected_skin_type = get_filter(animal_data)
+
+    # Filter data
+    filtered_data = filter_animal_data(animal_data, selected_skin_type)
+
+    # Generate HTML
+    formatted_animal_data = generate_html(filtered_data)
 
     # Get new html file
     replace_keyword_in_html(INPUT_HTML_FILE, KEYWORD_PLACEHOLDER, formatted_animal_data, OUTPUT_HTML_FILE)
