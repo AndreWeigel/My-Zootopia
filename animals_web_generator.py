@@ -52,10 +52,10 @@ def format_data(animals_data):
 
 
     for animal in animals_data:
-        name = animal.get('name')
-        diet = animal.get('characteristics', {}).get('diet')
-        location = ' '.join(animal.get('locations', [])) if 'locations' in animal else None
-        animal_type = animal.get('characteristics', {}).get('type')
+        name = animal.get('name', 'Unknown')
+        diet = animal.get('characteristics', {}).get('diet', 'Unknown')
+        location = ' '.join(animal.get('locations', [])) if 'locations' in animal else 'Unknown'
+        animal_type = animal.get('characteristics', {}).get('type', 'Unknown')
         skin_type = animal.get('characteristics', {}).get('skin_type')
 
         # Skip animals that don't match the selected skin_type
@@ -64,10 +64,6 @@ def format_data(animals_data):
                 continue
             print(animal)
         elif skin_type != selected_skin_type:
-            continue
-
-        # Skip printing if any of the values are missing
-        if None in (name, diet, location, animal_type):
             continue
 
         output.append(f"""
