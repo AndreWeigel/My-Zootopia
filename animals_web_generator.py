@@ -42,7 +42,7 @@ def get_filter(animals_data):
             return selected_skin_type
 
 
-def format_data(animals_data):
+def filter_and_generate_html(animals_data):
     """ Returns the animal data from JSON file """
 
     # get filtered skin type from user
@@ -116,7 +116,7 @@ def main():
     # Get data
     animal_data = get_animal_data()
 
-    formatted_animal_data = format_data(animal_data)
+    formatted_animal_data = filter_and_generate_html(animal_data)
     # define paths and keyword
     keyword = '__REPLACE_ANIMALS_INFO__'
     input_file = 'animals_template.html'
