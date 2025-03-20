@@ -1,6 +1,8 @@
 import json
 import requests
 
+from config import API_URL, API_KEY
+
 
 ANIMAL_FILE_PATH = "animals_data.json"
 INPUT_HTML_FILE = "animals_template.html"
@@ -8,17 +10,20 @@ OUTPUT_HTML_FILE = "animals.html"
 KEYWORD_PLACEHOLDER = "__REPLACE_ANIMALS_INFO__"
 
 
-def load_data(file_path):
-    """ Loads a JSON file """
+def fetch_data_from_api():
+    """ Fetches animal data from an API """
     try:
-        with open(file_path, "r", encoding="utf-8") as handle:
-            return json.load(handle)
-    except FileNotFoundError:
-        print(f"Error: File '{file_path}' not found.")
-        return
-    except json.JSONDecodeError:
-        print(f"Error: Failed to decode JSON content in '{file_path}'.")
-        return
+        response = requests.get(API_URL, headers={"Authorization": f"Bearer {API_KEY}"})
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching data from API: {e}")
+        return []
+
+
+def get_animal_data():
+    """ Returns the animal data from API """
+    return fetch_data_from_api()
 
 
 def get_animal_data():
