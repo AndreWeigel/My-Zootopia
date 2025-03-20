@@ -30,9 +30,12 @@ def fetch_data_from_api(animal_name):
         return []
 
 
-def get_animal_data(animal_name):
+def get_animal_data(animal):
     """ Returns the animal data from API """
-    return fetch_data_from_api(animal_name)
+    data = fetch_data_from_api(animal)
+    if not data:
+        print(f"No data found for the given animal: {animal}.")
+    return data
 
 
 
