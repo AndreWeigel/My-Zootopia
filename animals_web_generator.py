@@ -13,7 +13,7 @@ KEYWORD_PLACEHOLDER = "__REPLACE_ANIMALS_INFO__"
 def fetch_data_from_api():
     """ Fetches animal data from an API """
     try:
-        response = requests.get(API_URL, headers={"Authorization": f"Bearer {API_KEY}"})
+        response = requests.get(API_URL + '?name=fox', headers={"X-Api-Key": API_KEY})
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
@@ -25,10 +25,6 @@ def get_animal_data():
     """ Returns the animal data from API """
     return fetch_data_from_api()
 
-
-def get_animal_data():
-    """ Returns the animal data from JSON file """
-    return load_data(ANIMAL_FILE_PATH)
 
 
 def get_filter(animals_data):
@@ -129,13 +125,13 @@ def main():
     animal_data = get_animal_data()
 
     # Get user-selected filter
-    selected_skin_type = get_filter(animal_data)
+    #selected_skin_type = get_filter(animal_data)
 
     # Filter data
-    filtered_data = filter_animal_data(animal_data, selected_skin_type)
+    #filtered_data = filter_animal_data(animal_data, selected_skin_type)
 
     # Generate HTML
-    formatted_animal_data = generate_html(filtered_data)
+    formatted_animal_data = generate_html(animal_data)
 
     # Get new html file
     replace_keyword_in_html(INPUT_HTML_FILE, KEYWORD_PLACEHOLDER, formatted_animal_data, OUTPUT_HTML_FILE)
