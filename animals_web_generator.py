@@ -50,7 +50,6 @@ def filter_and_generate_html(animals_data):
 
     output = ['<ul class="cards">']
 
-
     for animal in animals_data:
         name = animal.get('name', 'Unknown')
         diet = animal.get('characteristics', {}).get('diet', 'Unknown')
@@ -102,6 +101,7 @@ def replace_keyword_in_html(input_file, keyword, replacement, output_file):
         if output_file:
             with open(output_file, "w", encoding="utf-8") as file:
                 file.write(modified_html)
+            print(f"Success: HTML file '{output_file}' has been created successfully.")
 
         return modified_html
     except FileNotFoundError:
