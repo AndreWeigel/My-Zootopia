@@ -9,11 +9,20 @@ INPUT_HTML_FILE = "animals_template.html"
 OUTPUT_HTML_FILE = "animals.html"
 KEYWORD_PLACEHOLDER = "__REPLACE_ANIMALS_INFO__"
 
+def get_animal():
+    """ Prompt user for animal """
+    animal_name = input("Enter the name of the animal you want to search for: ").strip()
+    if animal_name:
+        return animal_name
+    print("Invalid input. Please enter a valid animal name.")
+    return animal_name
 
-def fetch_data_from_api():
+def fetch_data_from_api(animal_name):
     """ Fetches animal data from an API """
+    full_api_url = API_URL + f"?name={animal_name}"
+
     try:
-        response = requests.get(API_URL + '?name=fox', headers={"X-Api-Key": API_KEY})
+        response = requests.get(full_api_url, headers={"X-Api-Key": API_KEY})
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
@@ -21,9 +30,9 @@ def fetch_data_from_api():
         return []
 
 
-def get_animal_data():
+def get_animal_data(animal_name):
     """ Returns the animal data from API """
-    return fetch_data_from_api()
+    return fetch_data_from_api(animal_name)
 
 
 
@@ -121,8 +130,10 @@ def replace_keyword_in_html(input_file, keyword, replacement, output_file):
 
 
 def main():
+
+    animal_name = get_animal()
     # Get data
-    animal_data = get_animal_data()
+    animal_data = get_animal_data(animal_name)
 
     # Get user-selected filter
     #selected_skin_type = get_filter(animal_data)
