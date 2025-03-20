@@ -11,7 +11,7 @@ KEYWORD_PLACEHOLDER = "__REPLACE_ANIMALS_INFO__"
 
 def get_animal():
     """ Prompt user for animal """
-    animal_name = input("Enter the name of the animal you want to search for: ").strip()
+    animal_name = input("Enter a name of an animal: ").strip()
     if animal_name:
         return animal_name
     print("Invalid input. Please enter a valid animal name.")
