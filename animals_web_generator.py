@@ -1,7 +1,4 @@
-import json
-import requests
-
-from config import API_URL, API_KEY
+import data_fetcher
 
 
 ANIMAL_FILE_PATH = "animals_data.json"
@@ -11,32 +8,18 @@ KEYWORD_PLACEHOLDER = "__REPLACE_ANIMALS_INFO__"
 
 def get_animal():
     """ Prompt user for animal """
-    animal_name = input("Enter a name of an animal: ").strip()
+    animal_name = input("Enter a name of an animal: ")
     if animal_name:
         return animal_name
     print("Invalid input. Please enter a valid animal name.")
     return animal_name
 
-def fetch_data_from_api(animal_name):
-    """ Fetches animal data from an API """
-    full_api_url = API_URL + f"?name={animal_name}"
-
-    try:
-        response = requests.get(full_api_url, headers={"X-Api-Key": API_KEY})
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching data from API: {e}")
-        return []
-
-
 def get_animal_data(animal):
     """ Returns the animal data from API """
-    data = fetch_data_from_api(animal)
+    data = data_fetcher.fetch_data(animal)
     if not data:
         print(f"No data found for the given animal: {animal}.")
     return data
-
 
 
 def get_filter(animals_data):

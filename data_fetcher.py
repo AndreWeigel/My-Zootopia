@@ -1,0 +1,29 @@
+import requests
+from config import API_URL, API_KEY
+
+def fetch_data(animal_name):
+    """
+    Fetches the animals data for the animal 'animal_name'.
+    Returns: a list of animals, each animal is a dictionary:
+    {
+      'name': ...,
+      'taxonomy': {
+        ...
+      },
+      'locations': [
+        ...
+      ],
+      'characteristics': {
+        ...
+      }
+    },
+    """
+    full_api_url = f"{API_URL}?name={animal_name}"
+
+    try:
+        response = requests.get(full_api_url, headers={"X-Api-Key": API_KEY})
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching data: {e}")
+        return []
