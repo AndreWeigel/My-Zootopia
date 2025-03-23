@@ -1,5 +1,6 @@
-import json
-import requests
+import re
+
+import data_fetcher
 
 
 ANIMAL_FILE_PATH = "animals_data.json"
@@ -8,60 +9,24 @@ OUTPUT_HTML_FILE = "animals.html"
 KEYWORD_PLACEHOLDER = "__REPLACE_ANIMALS_INFO__"
 
 
-def load_data(file_path):
-    """ Loads a JSON file """
-    try:
-        with open(file_path, "r", encoding="utf-8") as handle:
-            return json.load(handle)
-    except FileNotFoundError:
-        print(f"Error: File '{file_path}' not found.")
-        return
-    except json.JSONDecodeError:
-        print(f"Error: Failed to decode JSON content in '{file_path}'.")
-        return
-
-
-def get_animal_data():
-    """ Returns the animal data from JSON file """
-    return load_data(ANIMAL_FILE_PATH)
-
-
-def get_filter(animals_data):
-    """ Filter animal data by skin type."""
-    skin_types = set([animal.get('characteristics', {}).get('skin_type') for animal in animals_data])
-    # for handling missing data
-    skin_types.add("Other")
-
-    # Display available skin types to the user
-    print("Available skin types:", ', '.join(skin_types))
-
+def get_animal():
+    """ Prompt user for animal """
     while True:
-        # Ask user to select a skin type
-        selected_skin_type = input("Enter a skin type from the list above: ")
-
-        if selected_skin_type not in skin_types:
-            print(f"Invalid choice. Please select a valid skin type from the list.")
-            continue
-        else:
-            return selected_skin_type
+        animal_name = input("Enter a name of an animal: ").strip()
+        if animal_name and re.match(r'^[A-Za-z ]+$', animal_name):
+            return animal_name
+        print("Invalid input. Please enter a valid animal name.")
 
 
-def filter_animal_data(animals_data, selected_skin_type):
-    """ Filters animal data based on the selected skin type. """
-    filtered_data = []
-    for animal in animals_data:
-        skin_type = animal.get('characteristics', {}).get('skin_type')
-
-        if selected_skin_type == "Other":
-            if skin_type is None:
-                filtered_data.append(animal)
-        elif skin_type == selected_skin_type:
-            filtered_data.append(animal)
-
-    return filtered_data
+def get_animal_data(animal):
+    """ Returns the animal data from API """
+    data = data_fetcher.fetch_data(animal)
+    if not data:
+        print(f"No data found for the given animal: {animal}.")
+    return data
 
 
-def generate_html(animals_data):
+def build_animal_cards_html(animals_data):
     """ Generates HTML from filtered animal data. """
     output = ['<ul class="cards">']
 
@@ -120,17 +85,14 @@ def replace_keyword_in_html(input_file, keyword, replacement, output_file):
 
 
 def main():
+
+    animal_name = get_animal()
+
     # Get data
-    animal_data = get_animal_data()
-
-    # Get user-selected filter
-    selected_skin_type = get_filter(animal_data)
-
-    # Filter data
-    filtered_data = filter_animal_data(animal_data, selected_skin_type)
+    animal_data = get_animal_data(animal_name)
 
     # Generate HTML
-    formatted_animal_data = generate_html(filtered_data)
+    formatted_animal_data = build_animal_cards_html(animal_data)
 
     # Get new html file
     replace_keyword_in_html(INPUT_HTML_FILE, KEYWORD_PLACEHOLDER, formatted_animal_data, OUTPUT_HTML_FILE)
