@@ -55,6 +55,19 @@ def build_animal_cards_html(animals_data):
 
     return '\n'.join(output)
 
+def build_animal_not_found_card_html(animal_name):
+    output =  f"""
+                <ul class="cards">
+                <li class="cards__item">
+                  <div class="card__title">{animal_name}</div>
+                  <div class="card__text">
+                     This name does not match any animal in the Database.</div>
+                  </div>
+                </li>
+                </ul>
+                """
+    return output
+
 
 def replace_keyword_in_html(input_file, keyword, replacement, output_file):
     """
@@ -92,10 +105,12 @@ def main():
     animal_data = get_animal_data(animal_name)
 
     # Generate HTML
-    formatted_animal_data = build_animal_cards_html(animal_data)
-
+    if animal_data:
+        formatted_data = build_animal_cards_html(animal_data)
+    else:
+        formatted_data = build_animal_not_found_card_html(animal_name)
     # Get new html file
-    replace_keyword_in_html(INPUT_HTML_FILE, KEYWORD_PLACEHOLDER, formatted_animal_data, OUTPUT_HTML_FILE)
+    replace_keyword_in_html(INPUT_HTML_FILE, KEYWORD_PLACEHOLDER, formatted_data, OUTPUT_HTML_FILE)
 
 
 if __name__ == '__main__':
